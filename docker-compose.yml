@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: swepp1-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: swepp_user
+      POSTGRES_PASSWORD: swepp_password
+      POSTGRES_DB: swepp1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U swepp_user -d swepp1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: swepp1-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://swepp_user:swepp_password@postgres:5432/swepp1?schema=public
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-key-change-this}
+      JWT_EXPIRES_IN: 7d
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

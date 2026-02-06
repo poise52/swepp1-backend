@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  records GameRecord[]
+
+  @@map("users")
+}
+
+model GameRecord {
+  id         String   @id @default(uuid())
+  userId     String
+  difficulty String
+  rows       Int
+  cols       Int
+  mines      Int
+  time       Int
+  seed       Int
+  won        Boolean
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([difficulty])
+  @@index([won])
+  @@map("game_records")
+}
