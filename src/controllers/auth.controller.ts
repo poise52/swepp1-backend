@@ -53,11 +53,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({ user, token })
   } catch (error) {
+    console.error('Register error:', error)
     if (error instanceof z.ZodError) {
       res.status(400).json({ message: 'Validation error', errors: error.errors })
       return
     }
-    res.status(500).json({ message: 'Internal server error' })
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
 
@@ -93,11 +94,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token
     })
   } catch (error) {
+    console.error('Login error:', error)
     if (error instanceof z.ZodError) {
       res.status(400).json({ message: 'Validation error', errors: error.errors })
       return
     }
-    res.status(500).json({ message: 'Internal server error' })
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
 
@@ -124,6 +126,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<v
 
     res.json(user)
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' })
+    console.error('GetCurrentUser error:', error)
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }

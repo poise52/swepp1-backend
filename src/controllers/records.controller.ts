@@ -28,11 +28,12 @@ export const createRecord = async (req: AuthRequest, res: Response): Promise<voi
 
     res.status(201).json(record)
   } catch (error) {
+    console.error('CreateRecord error:', error)
     if (error instanceof z.ZodError) {
       res.status(400).json({ message: 'Validation error', errors: error.errors })
       return
     }
-    res.status(500).json({ message: 'Internal server error' })
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
 
@@ -62,7 +63,8 @@ export const getRecords = async (req: AuthRequest, res: Response): Promise<void>
 
     res.json({ records, total })
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' })
+    console.error('GetRecords error:', error)
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
 
@@ -81,6 +83,7 @@ export const getUserRecords = async (req: AuthRequest, res: Response): Promise<v
 
     res.json({ records, total })
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' })
+    console.error('GetUserRecords error:', error)
+    res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
