@@ -33,7 +33,10 @@ const corsOptions = {
   credentials: true
 }
 
-app.use(cors(corsOptions))
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://poise52.github.io'],
+  credentials: true
+}))
 
 app.use(express.json())
 app.use(limiter)
@@ -49,6 +52,11 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' })
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV !== 'production'){
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(~Server running on port ${PORT}~);
+  });
+}
+
+module.exports = app;
